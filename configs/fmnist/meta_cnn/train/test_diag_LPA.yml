@@ -1,0 +1,204 @@
+dataset:
+  name: fmnist
+  root: /home/dataset/fashion-mnist
+  train_valid_split_ratio: [0.9, 0.1]
+  train_valid_split_seed: 1
+  resize_mode: bicubic
+  center_crop: 28
+  n_test_samples: None
+  n_valid_samples: None
+  num_workers: 2
+  img_height: 28
+  img_width: 28
+  in_channels: 1
+  num_classes: 10
+  transform: augmented
+  shuffle: 1
+  augment: None
+criterion:
+  name: ce
+aux_criterion:
+  distance_constraint:
+    weight: 1
+optimizer:
+  name: adamw
+  lr: 0.002
+  weight_decay: 0.001
+  grad_clip_value: 0
+scheduler:
+  name: cosine
+  lr_gamma: 0.99
+  lr_min: 0
+run:
+  experiment: fmnist_meta_cnn_train
+  n_epochs: 50
+  batch_size: 32
+  use_cuda: 1
+  gpu_id: 0
+  deterministic: 1
+  random_state: 59
+  log_interval: 200
+  train_noise: 0
+  grad_clip: False
+  max_grad_value: 1
+  do_distill: False
+  compile: False
+quantize:
+  weight_bit: 8
+  input_bit: 8
+checkpoint:
+  save_best_model_k: 3
+  checkpoint_dir: fmnist/meta_cnn/train
+  model_comment: init_train_lr-0.0020_wb-16_ib-16_rotm-fixed_c-test_baseline
+  resume: 1
+  restore_checkpoint: "./checkpoint/fmnist/meta_cnn/train/Meta_CNNETE_init_train_lr-0.0020_c-test_acc-91.62_epoch-44.pt"
+  no_linear: 1
+
+model_trained:
+  name: Meta_CNNETE
+  conv_cfg:
+    type: MetaConv1dETE
+    mode: phase
+    w_bit: 16
+    in_bit: 16
+    path_multiplier: 1
+    path_depth: 2
+    enable_xy_pol: False
+    enable_alpha: ['False', 'False']
+    enable_beta: False
+    delta_z_mode: fixed
+    pixel_size_mode: fixed
+    lambda_mode: fixed
+    rotate_mode: fixed
+    gumbel_mode: fixed
+    enable_identity: False
+    swap_mode: fixed
+    weight_train: True
+    skip_path: False
+    scale_mode: bilinear
+    skip_meta: False
+    delta_z_data: 4
+    lambda_data: 0.85
+    pixel_size_data: 0.3
+    ref_lambda: 0.85
+    ref_pixel_size: 0.3
+    alpha_train: ['False', 'False']
+    lambda_train: False
+    delta_z_train: False
+    pixel_size_train: False
+    gumbel_T: 5
+    beta_train: False
+    gumbel_decay_rate: 0.956
+    encode_mode: phase
+    pixel_size_res: 1
+    delta_z_res: 10
+    phase_res: 1
+    lambda_res: 1
+    pac: True
+    kernel_size_list: [1]
+    length: 32
+    metalens_init_file_path: {}
+  linear_cfg:
+    type: QLinear
+    w_bit: 16
+    in_bit: 16
+    out_bit: 16
+  norm_cfg: None
+  act_cfg: None
+  kernel_list: [1]
+  mid_channel_list: [1]
+  kernel_size_list: [32]
+  hidden_list: []
+  stride_list: [1]
+  padding_list: [0]
+  dilation_list: [1]
+  groups_list: [1]
+  pool_out_size: 5
+  feature_extractor_type: regular
+  feature_dim: 32
+  encode_mode: phase
+
+model_test:
+  name: Meta_CNNETE
+  conv_cfg:
+    type: MetaConv1dETE
+    mode: phase
+    w_bit: 16
+    in_bit: 16
+    path_multiplier: 1
+    path_depth: 2
+    enable_xy_pol: False
+    enable_alpha: ['False', 'False']
+    enable_beta: False
+    delta_z_mode: fixed
+    pixel_size_mode: fixed
+    lambda_mode: fixed
+    rotate_mode: fixed
+    gumbel_mode: fixed
+    enable_identity: False
+    swap_mode: fixed
+    weight_train: True
+    skip_path: False
+    scale_mode: bilinear
+    skip_meta: False
+    delta_z_data: 4
+    lambda_data: 0.85
+    pixel_size_data: 0.02
+    ref_lambda: 0.85
+    ref_pixel_size: 0.02
+    alpha_train: ['False', 'False']
+    lambda_train: False
+    delta_z_train: False
+    pixel_size_train: False
+    gumbel_T: 5
+    beta_train: False
+    gumbel_decay_rate: 0.956
+    encode_mode: phase
+    pixel_size_res: 1
+    delta_z_res: 10
+    phase_res: 1
+    lambda_res: 1
+    pac: True
+    kernel_size_list: [1]
+    length: 480
+    metalens_init_file_path: {}
+  linear_cfg:
+    type: QLinear
+    w_bit: 16
+    in_bit: 16
+    out_bit: 16
+  norm_cfg: None
+  act_cfg: None
+  kernel_list: [1]
+  mid_channel_list: [1]
+  kernel_size_list: [480]
+  hidden_list: []
+  stride_list: [1]
+  padding_list: [0]
+  dilation_list: [1]
+  groups_list: [1]
+  pool_out_size: 5
+  feature_extractor_type: regular
+  feature_dim: 32
+  encode_mode: phase
+
+
+debug:
+  verbose: 1
+  verboise: 1
+permutation:
+  force_perm_legal_epoch: 70
+  perm_loss_rho: 1e-05
+  perm_loss_rho_gamma: 1.3
+  warm_up_epoch: 5
+  permutation_interval: 3
+  rho_epoch: 15
+  max_lambda: 10
+  optimizer:
+    name: adamw
+    lr: 0.002
+    weight_decay: 0
+    grad_clip_value: 1
+  n_epochs: 3000
+plot:
+  plot_root: ./figs/fmnist/meta_cnn/id-0_c-test_baseline/

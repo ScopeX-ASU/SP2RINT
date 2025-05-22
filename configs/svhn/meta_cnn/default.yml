@@ -1,0 +1,87 @@
+dataset:
+  name: svhn
+  root: "./data/svhn"
+  train_valid_split_ratio: [0.9, 0.1]
+  train_valid_split_seed: 1
+  resize_mode: bicubic
+  center_crop: 32
+  n_test_samples: null
+  n_valid_samples: null
+  num_workers: 2
+  img_height: 32
+  img_width: 32
+  in_channels: 3
+  num_classes: 10
+  transform: augmented
+  shuffle: 0
+  augment: null
+
+criterion:
+  name: ce
+
+aux_criterion: null
+
+optimizer:
+  name: adamw
+  lr: 0.002
+  weight_decay: 0.01
+  grad_clip_value: 1
+
+scheduler:
+  name: cosine
+  lr_gamma: 0.99
+  lr_min: 0
+
+run:
+  experiment: "default"
+  n_epochs: 100
+  batch_size: 32
+  use_cuda: 1
+  gpu_id: 0
+  deterministic: 1
+  random_state: 42
+  log_interval: 200
+  train_noise: 0
+  grad_clip: False
+  max_grad_value: 1
+  do_distill: False
+  compile: False
+
+quantize:
+  weight_bit: 32
+  input_bit: 32
+
+checkpoint:
+  save_best_model_k: 1
+  checkpoint_dir: "svhn/meta_cnn/pretrain"
+  model_comment: ""
+  resume: 0
+  restore_checkpoint: ""
+  no_linear: 0
+
+model:
+  name: "Meta_CNN"
+  conv_cfg:
+    type: Conv2d
+  linear_cfg:
+    type: Linear
+  digital_norm_cfg:
+    type: BN2d
+    affine: True
+  digital_act_cfg:
+    type: ReLU
+    inplace: True
+  kernel_list: [32, 32]
+  mid_channel_list: [32, 32]
+  kernel_size_list: [32, 32]
+  hidden_list: []
+  stride_list: [1, 1]
+  padding_list: [0, 0]
+  dilation_list: [1, 1]
+  groups_list: [1, 32]
+  pool_out_size: 5
+
+debug:
+  verbose: 1
+
+dst_scheduler: null

@@ -1,0 +1,78 @@
+criterion:
+  name: ce
+
+aux_criterion: null
+
+optimizer:
+  name: adamw
+  lr: 0.002
+  weight_decay: 0.01
+  grad_clip_value: 1
+
+scheduler:
+  name: cosine
+  lr_gamma: 0.99
+  lr_min: 0
+
+run:
+  experiment: "default"
+  n_epochs: 100
+  batch_size: 32
+  use_cuda: 1
+  gpu_id: 0
+  deterministic: 1
+  random_state: 42
+  log_interval: 200
+  train_noise: 0
+  grad_clip: False
+  max_grad_value: 1
+  do_distill: False
+
+quantize:
+  weight_bit: 32
+  input_bit: 32
+
+checkpoint:
+  save_best_model_k: 3
+  checkpoint_dir: "cifar100/meta_cnn/train"
+  model_comment: ""
+  resume: 0
+  restore_checkpoint: ""
+  no_linear: 0
+
+model:
+  name: "Meta_CNN"
+  conv_cfg:
+    type: MetaConv2d
+    w_bit: 32
+    in_bit: 32
+    path_multiplier: 1
+    path_depth: 4
+    enable_xy_pol: True  # whether to use x/y polarization
+    enable_alpha: True  # whether to use alpha factor for weighted input channel summation
+    enable_beta: True  # whether to use beta factor as polarization angle for x direction
+    delta_z_mode: fixed  # fixed, train_share, train, this one is reprogrammable
+    pixel_size_mode: fixed  # fixed, train_share, train, this one is not reprogrammable after fabrication
+    lambda_mode: fixed  # fixed, train_share, this one is reprogrammable after fabrication
+  # conv_cfg:
+  #   type: Conv2d
+  linear_cfg:
+    type: Linear
+  norm_cfg:
+    type: BN2d
+    affine: True
+  act_cfg:
+    type: ReLU
+    inplace: True
+  kernel_list: [32, 32]
+  kernel_size_list: [32, 32]
+  hidden_list: []
+  stride_list: [1, 1]
+  padding_list: [0, 0]
+  dilation_list: [1, 1]
+  groups_list: [1, 32]
+  pool_out_size: 5
+
+debug:
+  verbose: 1
+
