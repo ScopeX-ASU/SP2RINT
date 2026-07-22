@@ -94,22 +94,6 @@ making previously impractical large-scale meta-optical neural network training f
 
 ---
 
-## Repository Structure
-
-```text
-SP2RINT/
-├── core/               # Optimization framework
-├── models/             # DONN architectures
-├── inverse_design/     # Adjoint inverse optimization
-├── simulation/         # Electromagnetic simulation
-├── utils/              # Utilities
-├── configs/            # Experiment configurations
-├── scripts/            # Training & evaluation scripts
-└── examples/           # Example experiments
-```
-
----
-
 ## Citing SP<sup>2</sup>RINT
 ```
 @inproceedings{pma2026sp2rint,
